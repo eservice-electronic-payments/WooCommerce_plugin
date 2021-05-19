@@ -1,15 +1,18 @@
-=== eService Gateway for Woocommerce ===
-Requires at least: 4.1
-Tested up to: 4.9.5
-Stable tag: 1.4.0
-License: G
-License URI:
+[![GitHub license](https://img.shields.io/github/license/eservice-electronic-payments/WooCommerce_plugin)](https://github.com/eservice-electronic-payments/WooCommerce_plugin/blob/master/LICENSE)![Version](https://img.shields.io/badge/version-1.1.0-informational)
 
-== Description ==
+## eService Gateway for Woocommerce 
+Requires at least: 4.1  
+Tested up to: 4.9.5  
+Stable tag: 1.4.0  
+License: G  
+License URI:    
+Minimum WordPress Version: 5.2
+
+## Description 
 
 eService Gateway for Woocommerce is a Wordpress plugin which allows you to accept payments on your Woocommerce store.
 
-== Installation ==
+## Installation 
 
 This section describes how to install the plugin and get it working.
 
@@ -21,3 +24,8 @@ This section describes how to install the plugin and get it working.
 6. Wait while plugin is uploaded to your server
 7. Add your merchant id and password on "Settings" page, and choose your payment solution
 8. Click "Activate Plugin" button
+
+For further instructions on how to install the plugin on WooCommerce please go to our Wiki [here](https://github.com/eservice-electronic-payments/woocommerce_beta/wiki/Installation-of-eService-Plugin-for-WooCommerce).
+
+Got a question? Email wdrozenia_ecommerce@eservice.com.pl for help.
+
