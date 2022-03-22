@@ -319,7 +319,7 @@ class MMB_Gateway_Request
                 if( $order_status != 'on-hold'){
                     //Auth transaction
                     update_post_meta( $order->get_id(), '_payment_status', 'on-hold');
-                    $order->update_status( 'on-hold', sprintf( __( Payment authorized.', 'mmb-gateway-woocommerce' ) ) );
+                    $order->update_status( 'on-hold', sprintf( __( 'Payment authorized.', 'mmb-gateway-woocommerce' ) ) );
                     
                     // Reduce stock levels
                     wc_reduce_stock_levels($order_id);
