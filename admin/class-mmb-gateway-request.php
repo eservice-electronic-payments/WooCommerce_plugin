@@ -319,7 +319,7 @@ class MMB_Gateway_Request
                 if( $order_status != 'on-hold'){
                     //Auth transaction
                     update_post_meta( $order->get_id(), '_payment_status', 'on-hold');
-                    $order->update_status( 'on-hold', sprintf( __( 'Payment authorized.', 'mmb-gateway-woocommerce' ) ) );
+                    $order->update_status( 'on-hold', sprintf( __( 'Card payment authorized.', 'mmb-gateway-woocommerce' ) ) );
                     
                     // Reduce stock levels
                     wc_reduce_stock_levels($order_id);
@@ -331,7 +331,7 @@ class MMB_Gateway_Request
                     update_post_meta( $order->get_id(), '_payment_status', 'completed');
                     $order->payment_complete();
                     if($this->gateway->api_success_status == '1'){
-                        $order->update_status( 'completed', sprintf( __( 'Payment completed.', 'mmb-gateway-woocommerce' ) ) );
+                        $order->update_status( 'completed', sprintf( __( 'Card payment completed.', 'mmb-gateway-woocommerce' ) ) );
                     }
                     //                 do_action( 'woocommerce_payment_complete', $order_id);
                     
@@ -746,7 +746,7 @@ class MMB_Gateway_Request
                 $order->update_meta_data( '_payment_status', 'completed' );
                 $order->payment_complete();
                 if($this->gateway->api_success_status == '1'){
-                    $order->update_status( 'completed', sprintf( __( 'Payment completed.', 'mmb-gateway-woocommerce' ) ) );
+                    $order->update_status( 'completed', sprintf( __( 'Card payment completed.', 'mmb-gateway-woocommerce' ) ) );
                 }
                 $order_id = $order->get_id();
                 do_action( 'woocommerce_payment_complete', $order_id);
