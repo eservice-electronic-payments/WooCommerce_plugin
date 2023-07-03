@@ -53,7 +53,7 @@ class MMB_Gateway_Request
     public function __construct($gateway)
     {
         $this->gateway = $gateway;
-        $this->notify_url = WC()->api_request_url('EService');
+        $this->notify_url = WC()->api_request_url('eservice');
         //include the gateway sdk and init the class
         include_once('sdk/payments.php');
         $this->environment_params['merchantId'] =  $this->gateway->api_merchant_id;
@@ -514,48 +514,29 @@ class MMB_Gateway_Request
                 
                 return implode('', $mmb_form);
             case '1':
-                return $this->get_mmb_gateway_redirect_mode($sandbox,$token_request_data->token);
+                return $this->get_mmb_gateway_automatic_mode($sandbox,$token_request_data->token,'standalone');
             default:
-                return $this->get_mmb_gateway_hostedpaypage_mode($sandbox,$token_request_data->token);
+                return $this->get_mmb_gateway_automatic_mode($sandbox,$token_request_data->token,'hostedPayPage');
         }
         
     }
     /**
-     * To process with MMB Redirect Payment mode
-     * @param    WC_Order $order
-     * @param    bool $sandbox
-     * @return   string
+     * To proceed to the Gateway Cashier automatically
      */
-    private function get_mmb_gateway_redirect_mode($sandbox = false,$token){
+    private function get_mmb_gateway_automatic_mode($sandbox = false,$token,$integration){
         $data = array();
         $data['token'] = $token; 
         $data['merchantId'] =  $this->gateway->api_merchant_id;
-        $data['integrationMode'] = 'standalone';
+        $data['integrationMode'] = $integration;
         $form_html = '';
-        $form_html .= '<form action="'.$this->get_cashier_url($sandbox).' " method="post">';
+        $form_html .= '<form id="automaticForm" action="'.$this->get_cashier_url($sandbox).' " method="post">';
         foreach ($data as $a => $b) {
             $form_html .= "<input type='hidden' name='" . htmlentities($a) . "' value='" . htmlentities($b) . "'>";
         }
-        $form_html .= '<button type="submit" class="button alt">'.__( 'Pay with eService', 'mmb-gateway-woocommerce' ).'</button> </form>';
-        return $form_html;
-    }
-    /**
-     * To process with MMB hostedpaypage Payment mode
-     * @param    WC_Order $order
-     * @param    bool $sandbox
-     * @return   string
-     */
-    private function get_mmb_gateway_hostedpaypage_mode($sandbox = false,$token){
-        $data = array();
-        $data['token'] = $token;
-        $data['merchantId'] =  $this->gateway->api_merchant_id;
-        $data['integrationMode'] = 'hostedPayPage';
-        $form_html = '';
-        $form_html .= '<form action="'.$this->get_cashier_url($sandbox).' " method="post">';
-        foreach ($data as $a => $b) {
-            $form_html .= "<input type='hidden' name='" . htmlentities($a) . "' value='" . htmlentities($b) . "'>";
-        }
-        $form_html .= '<button type="submit" class="button alt">'.__( 'Pay with eService', 'mmb-gateway-woocommerce' ).'</button> </form>';
+        $form_html .= '</form>';
+        $form_html .= '<script type="text/javascript">';
+        $form_html .= "document.getElementById('automaticForm').submit();";
+        $form_html .= '</script>';
         return $form_html;
     }
     

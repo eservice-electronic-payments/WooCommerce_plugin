@@ -3,7 +3,7 @@
 /**
  * Plugin Name: WooCommerce eService
  * Description: WooCommerce eService gateway integration.
- * Version: 1.1.0
+ * Version: 1.2.0
  */
 
 /**
