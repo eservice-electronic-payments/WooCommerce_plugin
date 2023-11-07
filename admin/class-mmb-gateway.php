@@ -66,7 +66,7 @@ class Eservice extends WC_Payment_Gateway {
     public function __construct() {
 
         $this->plugin_name = 'mmb-gateway-woocommerce';
-        $this->version = '1.2.0';
+        $this->version = '1.2.1';
 
         $this->id = 'eservice';
         $this->method_title = __('eService', 'mmb-gateway-woocommerce');

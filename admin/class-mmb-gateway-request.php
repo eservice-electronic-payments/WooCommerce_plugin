@@ -45,6 +45,11 @@ class MMB_Gateway_Request
      */
     protected $environment_params;
     /**
+     * parameter to decide if the payment form should be submited automatically or not.
+     *
+     */
+    protected $automaticForm;
+    /**
      * Initialize the class and set its properties.
      *
      * @since   1.0.0
@@ -54,6 +59,7 @@ class MMB_Gateway_Request
     {
         $this->gateway = $gateway;
         $this->notify_url = WC()->api_request_url('eservice');
+        $this->automaticForm = 'yes';
         //include the gateway sdk and init the class
         include_once('sdk/payments.php');
         $this->environment_params['merchantId'] =  $this->gateway->api_merchant_id;
@@ -169,6 +175,19 @@ class MMB_Gateway_Request
         if(empty($shop_page_url)){
             $shop_page_url = site_url();
         }
+        $merchantNotificationUrl = add_query_arg(
+            [
+                'order_id' => $order->get_id()
+            ],
+            $this->notify_url
+        );
+        $merchantLandingPageUrl = add_query_arg(
+            [
+                'order_id' => $order->get_id(),
+                'wcapi' => 'eservice'
+            ],
+            $shop_page_url
+        );
         $ip = $order->get_customer_ip_address();
         if($ip == '::1'){
             $ip = '127.0.0.1';
@@ -184,8 +203,8 @@ class MMB_Gateway_Request
             'paymentSolutionId' => $paymentSolutionId,
             'channel' => 'ECOM',
             'allowOriginUrl' => $allowOriginUrl,
-            "merchantNotificationUrl" => $this->notify_url.'?order_id='. $order->get_id(),
-            "merchantLandingPageUrl" =>  $shop_page_url . "?wcapi=eservice&order_id=" . $order->get_id(),
+            "merchantNotificationUrl" => $merchantNotificationUrl,
+            "merchantLandingPageUrl" =>  $merchantLandingPageUrl,
             "customerFirstName" => $order->get_billing_first_name(),
             "customerLastName" => $order->get_billing_last_name(),
             "customerEmail" => $order->get_billing_email(),
@@ -514,29 +533,37 @@ class MMB_Gateway_Request
                 
                 return implode('', $mmb_form);
             case '1':
-                return $this->get_mmb_gateway_automatic_mode($sandbox,$token_request_data->token,'standalone');
+                return $this->get_gateway_form($token_request_data->token,'standalone',$sandbox);
             default:
-                return $this->get_mmb_gateway_automatic_mode($sandbox,$token_request_data->token,'hostedPayPage');
+                return $this->get_gateway_form($token_request_data->token,'hostedPayPage',$sandbox);
         }
         
     }
     /**
-     * To proceed to the Gateway Cashier automatically
+     * To generate the payment form to proceed to Gateway Cashier
      */
-    private function get_mmb_gateway_automatic_mode($sandbox = false,$token,$integration){
+    private function get_gateway_form($token,$integration,$sandbox = false){
         $data = array();
         $data['token'] = $token; 
         $data['merchantId'] =  $this->gateway->api_merchant_id;
         $data['integrationMode'] = $integration;
         $form_html = '';
-        $form_html .= '<form id="automaticForm" action="'.$this->get_cashier_url($sandbox).' " method="post">';
+        $form_html .= '<form id="redirectPaymentForm" action="'.$this->get_cashier_url($sandbox).' " method="post">';
         foreach ($data as $a => $b) {
             $form_html .= "<input type='hidden' name='" . htmlentities($a) . "' value='" . htmlentities($b) . "'>";
         }
+        if ($this->automaticForm == 'yes') {
+            //the checkout will redirect to Cashier automatcially. 
+            $message = 'Redirecting ...';
+            $form_html .= '<div id="automatic-redirect-background"><div class="content">'.$message.'</div></div>';
+            $form_html .= '<script type="text/javascript">';
+            $form_html .= 'window.onload = function(){document.getElementById("redirectPaymentForm").submit();}';
+            $form_html .= '</script>';
+        }else{
+            //the custmer can review and click on the button to pay
+            $form_html .= '<button type="submit" class="button alt">'.__( 'Pay with eService', 'mmb-gateway-woocommerce' ).'</button>';
+        }
         $form_html .= '</form>';
-        $form_html .= '<script type="text/javascript">';
-        $form_html .= "document.getElementById('automaticForm').submit();";
-        $form_html .= '</script>';
         return $form_html;
     }
     
