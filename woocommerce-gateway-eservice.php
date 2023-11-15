@@ -77,7 +77,11 @@ add_action('rest_api_init', function () {
 });
 function get_mmb_gateway_redirect_data(WP_REST_Request $request) {
     // Validating
-    $order_key = $request->get_param('order_key');
+    $body = $request->get_json_params();
+    if (!$body) {
+        return new WP_Error('no_payload', 'No payload found', array('status' => 400));
+    }
+    $order_key = $body['order_key'];
     if (!$order_key) {
         return new WP_Error('no_order_key', 'No order key provided', array('status' => 404));
     }
