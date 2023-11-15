@@ -32,6 +32,8 @@ Got a question? Email wdrozenia_ecommerce@eservice.com.pl for help.
 
 ## Using WooCommerce as headless eCommerce
 
+WARNING: Headless flow is supported only for integration modes `hostedPayPage` and `standalone`. IFrame flow is not supported!
+
 This section is for developers using WooCommerce as headless eCommerce, having separated frontend application communicating with WooCommerce via REST API/GraphQL.
 
 Since version 1.3.0, an integration enables obtaining data to build a redirection form via REST API. It provides `POST` endpoint on the following URI: `https://your-wordpress-instance.local/wp-json/mmb-gateway/v1/redirect-data` where `https://your-wordpress-instance.local` is as base URL of your Wordpress instance. An endpoint expects JSON payload with a field called `order_key` containing an order key of WooCommerce order. Example TypeScript client:
