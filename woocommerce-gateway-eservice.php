@@ -83,7 +83,7 @@ function get_mmb_gateway_redirect_data(WP_REST_Request $request) {
     }
     $order_key = $body['order_key'];
     if (!$order_key) {
-        return new WP_Error('no_order_key', 'No order key provided', array('status' => 404));
+        return new WP_Error('no_order_key', 'No order key provided', array('status' => 400));
     }
     $order_id = wc_get_order_id_by_order_key($order_key);
     if (!$order_id) {
@@ -91,7 +91,7 @@ function get_mmb_gateway_redirect_data(WP_REST_Request $request) {
     }
     $order = wc_get_order($order_id);
     if (!$order) {
-        return new WP_Error('invalid_order', 'Order not found', array('status' => 404));
+        return new WP_Error('invalid_order', 'Order not found', array('status' => 500));
     }
     if ($order->is_paid()) {
         return new WP_Error('already_paid', 'Order already paid, nothing to do', array('status' => 204));
