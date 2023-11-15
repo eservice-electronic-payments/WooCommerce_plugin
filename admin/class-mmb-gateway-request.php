@@ -434,14 +434,15 @@ class MMB_Gateway_Request
     }
 
     /**
-     * Generate MMB payment form
+     * Generate MMB payment form or data required to built it on your own if $headless equals true
      *
      * @since    1.0.0
      * @param    WC_Order $order
      * @param    bool $sandbox
+     * @param    bool $headless 
      * @return   string
      */
-    public function generate_mmb_gateway_form($order, $sandbox = false)
+    public function generate_mmb_gateway_form($order, $sandbox = false, $headless = false)
     {
         if ( $this->gateway->api_merchant_id === null || $this->gateway->api_merchant_id === ''
             || $this->gateway->api_password === null || $this->gateway->api_password === '' ) {
@@ -533,22 +534,29 @@ class MMB_Gateway_Request
                 
                 return implode('', $mmb_form);
             case '1':
-                return $this->get_gateway_form($token_request_data->token,'standalone',$sandbox);
+                return $this->get_gateway_form($token_request_data->token,'standalone', $sandbox, $headless);
             default:
-                return $this->get_gateway_form($token_request_data->token,'hostedPayPage',$sandbox);
+                return $this->get_gateway_form($token_request_data->token,'hostedPayPage', $sandbox, $headless);
         }
         
     }
     /**
      * To generate the payment form to proceed to Gateway Cashier
      */
-    private function get_gateway_form($token,$integration,$sandbox = false){
+    private function get_gateway_form($token, $integration, $sandbox = false, $headless = false){
         $data = array();
         $data['token'] = $token; 
         $data['merchantId'] =  $this->gateway->api_merchant_id;
         $data['integrationMode'] = $integration;
+        $cashier_url = $this->get_cashier_url($sandbox);
+        if ($headless) {
+            $data['cashierUrl'] = $cashier_url;
+            $data['automaticForm'] = $this->automaticForm == 'yes';
+            return $data;
+        }
+
         $form_html = '';
-        $form_html .= '<form id="redirectPaymentForm" action="'.$this->get_cashier_url($sandbox).' " method="post">';
+        $form_html .= '<form id="redirectPaymentForm" action="'.$cashier_url.' " method="post">';
         foreach ($data as $a => $b) {
             $form_html .= "<input type='hidden' name='" . htmlentities($a) . "' value='" . htmlentities($b) . "'>";
         }
